@@ -2,6 +2,11 @@
 {
   "name": "bao-hong-girl-static",
   "version": "1.0.0",
-  "description": "Static e-commerce site for Bao Hong Girl",
-  "homepage": "./"
+  "description": "Static version of Bao Hong Girl E-commerce",
+  "scripts": {
+    "start": "serve ."
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
 }
