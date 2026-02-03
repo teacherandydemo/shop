@@ -1,0 +1,23 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-gray-800 bg-[#FAFAFA];
+    font-family: 'Noto Sans TC', 'Inter', sans-serif;
+  }
+  .font-serif {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer components {
+  .botanical-green {
+    @apply text-[#2D5A27];
+  }
+  .bg-botanical-green {
+    @apply bg-[#2D5A27];
+  }
+}

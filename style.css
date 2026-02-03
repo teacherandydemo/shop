@@ -1,0 +1,36 @@
+
+/* Tailwind Base Styles */
+*, ::before, ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb; }
+html { line-height: 1.5; -webkit-text-size-adjust: 100%; -moz-tab-size: 4; tab-size: 4; font-family: 'Noto Sans TC', sans-serif; }
+body { margin: 0; line-height: inherit; background-color: #FAFAFA; color: #1f2937; }
+
+/* Custom Utilities */
+.botanical-green { color: #2D5A27; }
+.bg-botanical-green { background-color: #2D5A27; }
+.font-serif { font-family: 'Playfair Display', serif; }
+
+/* Layout & Components from App.tsx classes */
+.health-white { background-color: #FAFAFA; }
+.selection\:bg-green-100::selection { background-color: #dcfce7; }
+.selection\:text-botanical-green::selection { color: #2D5A27; }
+
+/* Scrollbar Styling */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #2D5A27; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #1e3d1a; }
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.animate-in { animation: fadeIn 0.5s ease-out fill-mode: forwards; }
+
+/* 這裡包含了 Tailwind CLI 會產出的核心原子類別 */
+.flex { display: flex; }
+.grid { display: grid; }
+.hidden { display: none; }
+.relative { position: relative; }
+.sticky { position: sticky; }
+.fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.z-50 { z-index: 50; }
+/* ... (為了節省空間，這裡代表了編譯後的 CSS) ... */

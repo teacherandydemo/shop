@@ -2,7 +2,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
-import './index.css'; // 透過 JS 引入 CSS 是現代開發的標準做法，可避免 HTML 直接讀取產生的 404
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
