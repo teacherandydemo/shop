@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Product, CartItem, ViewState } from './types';
+import { Product, CartItem, ViewState } from './types.ts';
 
-const GAS_API_URL = 'https://script.google.com/macros/s/AKfycby7N5Z7X6zTDbwUtRLtNu_XQR2JiHB1ke1Z8mCNaR786zjWPQkR6bzj81eF-8SgNVWH/exec';
+// 使用最新的部署 URL，確保支援訂單歷史與管理員功能
+const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzlcqQtsqEl8kg-sopXOXa165kp7KUslTf-I8mcWxJTRQQmqfYIj6FxtyKCT1uhXeON/exec';
 
 const formatPhone = (phone: any) => {
   if (!phone) return "";
@@ -19,7 +20,7 @@ const formatDate = (date: any) => {
 };
 
 const getStableImageUrl = (url: string) => {
-  if (!url || typeof url !== 'string') return '';
+  if (!url || typeof url !== 'string') return 'https://placehold.co/600x600?text=BHG+Product';
   if (!url.includes('drive.google.com') && !url.includes('googleusercontent.com')) return url;
   let fileId = '';
   const patterns = [/\/file\/d\/([^\/\\\?#]+)/, /id=([^\/\\\?#&]+)/, /\/d\/([^\/\\\?#]+)/];
@@ -30,6 +31,7 @@ const getStableImageUrl = (url: string) => {
   return fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000` : url;
 };
 
+// Navbar 組件
 const Navbar: React.FC<{
   setView: (v: ViewState) => void,
   isLoggedIn: boolean,
@@ -55,6 +57,7 @@ const Navbar: React.FC<{
   </nav>
 );
 
+// 數量選擇彈窗
 const QuantityModal: React.FC<{
   isOpen: boolean,
   product: Product | null,
@@ -75,12 +78,13 @@ const QuantityModal: React.FC<{
           <input type="number" value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value) || 1)} className="w-20 bg-transparent text-center text-2xl font-black outline-none" />
           <button onClick={() => setQuantity(quantity + 1)} className="w-12 h-12 flex items-center justify-center bg-white rounded-2xl shadow-sm hover:bg-gray-100 transition-colors text-xl font-bold">+</button>
         </div>
-        <button onClick={onConfirm} className="w-full bg-botanical-green text-white py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-xl shadow-green-900/20 hover:scale-[1.02] active:scale-95 transition-all">確認加入購物袋</button>
+        <button onClick={onConfirm} className="w-full bg-botanical-green text-white py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-xl shadow-green-900/20 hover:scale-[1.02] transition-all">確認加入購物袋</button>
       </div>
     </div>
   );
 };
 
+// 購物車抽屜
 const CartDrawer: React.FC<{
   isOpen: boolean,
   cart: CartItem[],
@@ -129,75 +133,9 @@ const CartDrawer: React.FC<{
   </>
 );
 
-const AuthView: React.FC<{
-  authMode: 'LOGIN' | 'REGISTER',
-  setAuthMode: (m: 'LOGIN' | 'REGISTER') => void,
-  regForm: any,
-  setRegForm: React.Dispatch<React.SetStateAction<any>>,
-  isAuthProcessing: boolean,
-  handleRegister: (e: React.FormEvent) => void,
-  handleLogin: (e: React.FormEvent) => void
-}> = ({ authMode, setAuthMode, regForm, setRegForm, isAuthProcessing, handleRegister, handleLogin }) => (
-    <div className="max-w-xl mx-auto py-12 animate-in fade-in duration-700">
-      <div className="bg-white rounded-[3rem] p-10 md:p-16 shadow-2xl border border-gray-50">
-        <header className="text-center mb-12">
-          <h2 className="text-4xl font-serif font-bold mb-4">{authMode === 'LOGIN' ? '歡迎回來' : '建立您的會員帳戶'}</h2>
-          <p className="text-gray-400 text-sm italic">{authMode === 'LOGIN' ? '請輸入您的電子郵件與密碼登入' : '請填寫以下資訊，開啟您的自然美學旅程'}</p>
-        </header>
-        
-        {authMode === 'REGISTER' ? (
-          <form onSubmit={handleRegister} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="md:col-span-2 border-b border-gray-50 pb-4"><span className="text-[11px] font-black botanical-green uppercase tracking-[0.3em]">01 帳號資訊</span></div>
-              <div className="md:col-span-1">
-                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block">電子郵件 Email</label>
-                <input required type="email" value={regForm.m_email} onChange={e => setRegForm((prev: any) => ({...prev, m_email: e.target.value}))} className="w-full bg-gray-50 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-botanical-green/10" placeholder="yourname@email.com" />
-              </div>
-              <div className="md:col-span-1">
-                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block">登入密碼 Password</label>
-                <input required type="password" value={regForm.m_password} onChange={e => setRegForm((prev: any) => ({...prev, m_password: e.target.value}))} className="w-full bg-gray-50 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-botanical-green/10" placeholder="至少 6 位字元" />
-              </div>
-              <div className="md:col-span-2 border-b border-gray-50 pb-4 mt-4"><span className="text-[11px] font-black botanical-green uppercase tracking-[0.3em]">02 基本資料</span></div>
-              <div className="md:col-span-1">
-                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block">真實姓名 Full Name</label>
-                <input required type="text" value={regForm.m_name} onChange={e => setRegForm((prev: any) => ({...prev, m_name: e.target.value}))} className="w-full bg-gray-50 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-botanical-green/10" />
-              </div>
-              <div className="md:col-span-1">
-                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block">連絡電話 Phone</label>
-                <input required type="tel" value={regForm.m_phone} onChange={e => setRegForm((prev: any) => ({...prev, m_phone: e.target.value.replace(/\D/g, '')}))} className="w-full bg-gray-50 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-botanical-green/10" placeholder="0912345678" />
-              </div>
-              <div className="md:col-span-2">
-                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block">常用收件地址 Address</label>
-                <input required type="text" value={regForm.m_address} onChange={e => setRegForm((prev: any) => ({...prev, m_address: e.target.value}))} className="w-full bg-gray-50 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-botanical-green/10" />
-              </div>
-            </div>
-            <button disabled={isAuthProcessing} className="w-full bg-botanical-green text-white py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] shadow-2xl shadow-green-900/20 hover:scale-[1.01] active:scale-95 transition-all mt-6">{isAuthProcessing ? '正在註冊...' : '建立會員帳號'}</button>
-          </form>
-        ) : (
-          <form onSubmit={handleLogin} className="space-y-6 max-w-sm mx-auto">
-            <div>
-              <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block">電子郵件 Email</label>
-              <input required type="email" name="m_email" className="w-full bg-gray-50 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-botanical-green/10" />
-            </div>
-            <div>
-              <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block">密碼 Password</label>
-              <input required type="password" name="m_password" className="w-full bg-gray-50 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-botanical-green/10" />
-            </div>
-            <button disabled={isAuthProcessing} className="w-full bg-botanical-green text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all">{isAuthProcessing ? '登入中...' : '登入系統'}</button>
-          </form>
-        )}
-        <div className="mt-12 text-center">
-          <button onClick={() => setAuthMode(authMode === 'LOGIN' ? 'REGISTER' : 'LOGIN')} className="text-[11px] font-black text-gray-300 hover:text-botanical-green transition-colors uppercase tracking-[0.2em] flex items-center justify-center gap-2 mx-auto">
-            <span className="w-8 h-[1px] bg-gray-100"></span>{authMode === 'LOGIN' ? '還不是會員？點此註冊' : '已有帳號？點此登入'}<span className="w-8 h-[1px] bg-gray-100"></span>
-          </button>
-        </div>
-      </div>
-    </div>
-);
-
+// 歷史訂單組件
 const OrderHistoryView: React.FC<{ orders: any[], filterStatus: string, setFilterStatus: (s: string) => void, isAdmin: boolean }> = ({ orders, filterStatus, setFilterStatus, isAdmin }) => {
   const filteredOrders = filterStatus === '全部' ? orders : orders.filter(o => o.o_status === filterStatus);
-  
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex justify-between items-center mb-8">
@@ -205,7 +143,7 @@ const OrderHistoryView: React.FC<{ orders: any[], filterStatus: string, setFilte
         <select 
           value={filterStatus} 
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="bg-gray-50 border-none rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 ring-botanical-green/10 outline-none"
+          className="bg-gray-50 border-none rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 ring-botanical-green/10 outline-none cursor-pointer"
         >
           <option value="全部">全部狀態</option>
           <option value="待處理">待處理</option>
@@ -213,7 +151,6 @@ const OrderHistoryView: React.FC<{ orders: any[], filterStatus: string, setFilte
           <option value="已取消">已取消</option>
         </select>
       </div>
-      
       {filteredOrders.length === 0 ? (
         <div className="bg-gray-50 rounded-[2rem] p-12 text-center border border-dashed border-gray-200">
           <p className="text-gray-400 italic">目前沒有符合條件的訂單紀錄</p>
@@ -238,16 +175,14 @@ const OrderHistoryView: React.FC<{ orders: any[], filterStatus: string, setFilte
                   }`}>{order.o_status}</span>
                 </div>
               </div>
-              
               <div className="border-t border-b border-gray-50 py-6 my-6 space-y-4">
-                {JSON.parse(order.o_items).map((item: any, idx: number) => (
+                {JSON.parse(order.o_items || "[]").map((item: any, idx: number) => (
                   <div key={idx} className="flex justify-between items-center text-sm">
                     <span className="font-bold">{item.p_name} <span className="text-gray-300 ml-2">x {item.qty}</span></span>
                     <span className="text-gray-400">NT$ {(item.price * item.qty).toLocaleString()}</span>
                   </div>
                 ))}
               </div>
-              
               <div className="flex justify-between items-end">
                 <div>
                    <span className="text-[9px] font-black uppercase text-gray-400 tracking-widest block mb-1">收件地址</span>
@@ -267,6 +202,7 @@ const OrderHistoryView: React.FC<{ orders: any[], filterStatus: string, setFilte
   );
 };
 
+// 會員名單管理 (管理員)
 const MemberListView: React.FC<{ members: any[] }> = ({ members }) => (
   <div className="space-y-8 animate-in fade-in duration-500">
     <h3 className="text-2xl font-serif font-bold">全站會員清單</h3>
@@ -297,6 +233,72 @@ const MemberListView: React.FC<{ members: any[] }> = ({ members }) => (
   </div>
 );
 
+// 登入與註冊視圖
+const AuthView: React.FC<{
+  authMode: 'LOGIN' | 'REGISTER',
+  setAuthMode: (mode: 'LOGIN' | 'REGISTER') => void,
+  regForm: any,
+  setRegForm: (form: any) => void,
+  isAuthProcessing: boolean,
+  handleRegister: (e: React.FormEvent) => Promise<void>,
+  handleLogin: (e: React.FormEvent) => Promise<void>
+}> = ({ authMode, setAuthMode, regForm, setRegForm, isAuthProcessing, handleRegister, handleLogin }) => (
+  <div className="max-w-md mx-auto py-12 animate-in fade-in zoom-in-95 duration-700">
+    <div className="bg-white rounded-[3rem] p-10 md:p-16 shadow-2xl border border-gray-50">
+      <header className="text-center mb-12">
+        <span className="text-[11px] font-black botanical-green uppercase tracking-[0.5em] mb-4 block">Boutique Access</span>
+        <h2 className="text-4xl font-serif font-bold">{authMode === 'LOGIN' ? '歡迎歸來' : '加入會員'}</h2>
+      </header>
+      {authMode === 'LOGIN' ? (
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div>
+            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block">電子郵件 Email</label>
+            <input name="m_email" type="email" required className="w-full bg-gray-50 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-botanical-green/10" placeholder="your@email.com" />
+          </div>
+          <div>
+            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block">密碼 Password</label>
+            <input name="m_password" type="password" required className="w-full bg-gray-50 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-botanical-green/10" placeholder="••••••••" />
+          </div>
+          <button type="submit" disabled={isAuthProcessing} className="w-full bg-botanical-green text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-[1.02] transition-transform disabled:opacity-50 mt-4">
+            {isAuthProcessing ? '驗證中...' : '登入帳戶'}
+          </button>
+          <div className="text-center pt-8 border-t border-gray-50 mt-8">
+            <p className="text-gray-400 text-xs mb-4">還不是會員嗎？</p>
+            <button type="button" onClick={() => setAuthMode('REGISTER')} className="text-botanical-green font-black text-[10px] uppercase tracking-widest hover:underline">立即註冊專屬帳號</button>
+          </div>
+        </form>
+      ) : (
+        <form onSubmit={handleRegister} className="space-y-6">
+           <div>
+            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block">電子郵件 Email</label>
+            <input required type="email" className="w-full bg-gray-50 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-botanical-green/10" value={regForm.m_email} onChange={e => setRegForm({...regForm, m_email: e.target.value})} />
+          </div>
+          <div>
+            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block">設定密碼 Password</label>
+            <input required type="password" minLength={6} className="w-full bg-gray-50 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-botanical-green/10" value={regForm.m_password} onChange={e => setRegForm({...regForm, m_password: e.target.value})} />
+          </div>
+          <div>
+            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block">姓名 Full Name</label>
+            <input required className="w-full bg-gray-50 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-botanical-green/10" value={regForm.m_name} onChange={e => setRegForm({...regForm, m_name: e.target.value})} />
+          </div>
+          <div>
+            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2 block">連絡電話 Phone</label>
+            <input required className="w-full bg-gray-50 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-botanical-green/10" value={regForm.m_phone} onChange={e => setRegForm({...regForm, m_phone: e.target.value})} />
+          </div>
+          <button type="submit" disabled={isAuthProcessing} className="w-full bg-botanical-green text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-[1.02] transition-transform disabled:opacity-50 mt-4">
+            {isAuthProcessing ? '註冊中...' : '建立會員帳號'}
+          </button>
+          <div className="text-center pt-8 border-t border-gray-50 mt-8">
+            <p className="text-gray-400 text-xs mb-4">已經有帳號了？</p>
+            <button type="button" onClick={() => setAuthMode('LOGIN')} className="text-botanical-green font-black text-[10px] uppercase tracking-widest hover:underline">返回登入介面</button>
+          </div>
+        </form>
+      )}
+    </div>
+  </div>
+);
+
+// 會員專區整合視圖
 const MemberProfileView: React.FC<{
   user: any,
   onLogout: () => void,
@@ -312,26 +314,31 @@ const MemberProfileView: React.FC<{
   const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      if (activeTab === 'ORDERS') {
+        setIsFetching(true);
+        try {
+          const response = await fetch(GAS_API_URL, { 
+            method: 'POST', 
+            body: JSON.stringify({ action: 'getOrders', data: { m_id: user.m_id, m_level: user.m_level } }) 
+          });
+          const result = await response.json();
+          if (result.status === 'success') setOrders(result.data);
+        } catch (e) { console.error(e); } finally { setIsFetching(false); }
+      } else if (activeTab === 'ADMIN_MEMBERS' && user.m_level === 'Admin') {
+        setIsFetching(true);
+        try {
+          const response = await fetch(GAS_API_URL, { 
+            method: 'POST', 
+            body: JSON.stringify({ action: 'getAllMembers', data: { m_level: user.m_level } }) 
+          });
+          const result = await response.json();
+          if (result.status === 'success') setMembers(result.data);
+        } catch (e) { console.error(e); } finally { setIsFetching(false); }
+      }
+    };
     fetchUserData();
-  }, [activeTab]);
-
-  const fetchUserData = async () => {
-    if (activeTab === 'ORDERS') {
-      setIsFetching(true);
-      try {
-        const response = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getOrders', data: { m_id: user.m_id, m_level: user.m_level } }) });
-        const result = await response.json();
-        if (result.status === 'success') setOrders(result.data);
-      } catch (e) { console.error(e); } finally { setIsFetching(false); }
-    } else if (activeTab === 'ADMIN_MEMBERS' && user.m_level === 'Admin') {
-      setIsFetching(true);
-      try {
-        const response = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'getAllMembers', data: { m_level: user.m_level } }) });
-        const result = await response.json();
-        if (result.status === 'success') setMembers(result.data);
-      } catch (e) { console.error(e); } finally { setIsFetching(false); }
-    }
-  };
+  }, [activeTab, user.m_id, user.m_level]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -344,52 +351,44 @@ const MemberProfileView: React.FC<{
   return (
     <div className="max-w-6xl mx-auto py-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar Nav */}
         <div className="lg:w-64 space-y-2">
-          <button onClick={() => {setActiveTab('PROFILE'); setIsEditing(false);}} className={`w-full text-left px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'PROFILE' ? 'bg-botanical-green text-white shadow-xl shadow-green-900/10' : 'text-gray-400 hover:bg-white hover:text-botanical-green'}`}>個人基本資料</button>
-          <button onClick={() => setActiveTab('ORDERS')} className={`w-full text-left px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'ORDERS' ? 'bg-botanical-green text-white shadow-xl shadow-green-900/10' : 'text-gray-400 hover:bg-white hover:text-botanical-green'}`}>
+          <button onClick={() => {setActiveTab('PROFILE'); setIsEditing(false);}} className={`w-full text-left px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'PROFILE' ? 'bg-botanical-green text-white shadow-xl' : 'text-gray-400 hover:bg-white'}`}>個人基本資料</button>
+          <button onClick={() => setActiveTab('ORDERS')} className={`w-full text-left px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'ORDERS' ? 'bg-botanical-green text-white shadow-xl' : 'text-gray-400 hover:bg-white'}`}>
             {user.m_level === 'Admin' ? '全站訂單管理' : '歷史訂單紀錄'}
           </button>
           {user.m_level === 'Admin' && (
-            <button onClick={() => setActiveTab('ADMIN_MEMBERS')} className={`w-full text-left px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'ADMIN_MEMBERS' ? 'bg-botanical-green text-white shadow-xl shadow-green-900/10' : 'text-gray-400 hover:bg-white hover:text-botanical-green'}`}>會員名單管理</button>
+            <button onClick={() => setActiveTab('ADMIN_MEMBERS')} className={`w-full text-left px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'ADMIN_MEMBERS' ? 'bg-botanical-green text-white shadow-xl' : 'text-gray-400 hover:bg-white'}`}>會員名單管理</button>
           )}
           <div className="pt-8 border-t border-gray-100 mt-8">
             <button onClick={onLogout} className="w-full text-left px-8 py-4 text-[11px] font-black uppercase tracking-widest text-rose-400 hover:text-rose-600 transition-colors">安全登出帳戶</button>
           </div>
         </div>
-
-        {/* Content Area */}
         <div className="flex-1 bg-white rounded-[3rem] p-8 md:p-16 shadow-2xl border border-gray-50 min-h-[600px]">
           {isFetching ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="w-10 h-10 border-2 border-gray-100 border-t-botanical-green rounded-full animate-spin"></div>
-            </div>
+            <div className="flex items-center justify-center h-full"><div className="w-10 h-10 border-2 border-gray-100 border-t-botanical-green rounded-full animate-spin"></div></div>
           ) : activeTab === 'PROFILE' ? (
             <div>
               <header className="mb-12 flex justify-between items-end">
-                <div>
-                  <span className="text-[11px] font-black botanical-green uppercase tracking-[0.5em] mb-4 block">Membership Gallery</span>
-                  <h2 className="text-4xl font-serif font-bold">個人資料概覽</h2>
-                </div>
-                {!isEditing && <button onClick={() => setIsEditing(true)} className="bg-botanical-green text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-all">編輯資料</button>}
+                <div><span className="text-[11px] font-black botanical-green uppercase tracking-[0.5em] mb-4 block">Membership Gallery</span><h2 className="text-4xl font-serif font-bold">個人資料概覽</h2></div>
+                {!isEditing && <button onClick={() => setIsEditing(true)} className="bg-botanical-green text-white px-8 py-3 rounded-full text-[10px] font-black uppercase shadow-lg hover:scale-105 transition-all">編輯資料</button>}
               </header>
               <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                   <div className="space-y-10">
                     <div><label className="text-[9px] font-black uppercase text-gray-300 tracking-widest mb-2 block">會員編號</label><p className="font-bold text-gray-400">{user.m_id}</p></div>
                     <div><label className="text-[9px] font-black uppercase text-gray-300 tracking-widest mb-2 block">電子郵件</label><p className="font-bold text-gray-400">{user.m_email}</p></div>
-                    <div><label className="text-[9px] font-black uppercase text-gray-300 tracking-widest mb-2 block">真實姓名</label>{isEditing ? <input required className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm outline-none focus:ring-2 ring-botanical-green/10" value={editForm.m_name} onChange={e => setEditForm({...editForm, m_name: e.target.value})} /> : <p className="font-bold text-lg">{user.m_name}</p>}</div>
+                    <div><label className="text-[9px] font-black uppercase text-gray-300 tracking-widest mb-2 block">真實姓名</label>{isEditing ? <input required className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 ring-botanical-green/10 outline-none" value={editForm.m_name} onChange={e => setEditForm({...editForm, m_name: e.target.value})} /> : <p className="font-bold text-lg">{user.m_name}</p>}</div>
                   </div>
                   <div className="space-y-10">
-                    <div><label className="text-[9px] font-black uppercase text-gray-300 tracking-widest mb-2 block">連絡電話</label>{isEditing ? <input required className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm outline-none focus:ring-2 ring-botanical-green/10" value={editForm.m_phone} onChange={e => setEditForm({...editForm, m_phone: e.target.value})} /> : <p className="font-bold text-lg">{formatPhone(user.m_phone)}</p>}</div>
-                    <div><label className="text-[9px] font-black uppercase text-gray-300 tracking-widest mb-2 block">出生日期</label>{isEditing ? <input type="date" className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm outline-none focus:ring-2 ring-botanical-green/10" value={editForm.m_birthday} onChange={e => setEditForm({...editForm, m_birthday: e.target.value})} /> : <p className="font-bold text-lg">{formatDate(user.m_birthday)}</p>}</div>
-                    <div><label className="text-[9px] font-black uppercase text-gray-300 tracking-widest mb-2 block">預設地址</label>{isEditing ? <input className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm outline-none focus:ring-2 ring-botanical-green/10" value={editForm.m_address} onChange={e => setEditForm({...editForm, m_address: e.target.value})} /> : <p className="font-bold text-sm text-gray-600 leading-relaxed">{user.m_address}</p>}</div>
+                    <div><label className="text-[9px] font-black uppercase text-gray-300 tracking-widest mb-2 block">連絡電話</label>{isEditing ? <input required className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 ring-botanical-green/10 outline-none" value={editForm.m_phone} onChange={e => setEditForm({...editForm, m_phone: e.target.value})} /> : <p className="font-bold text-lg">{formatPhone(user.m_phone)}</p>}</div>
+                    <div><label className="text-[9px] font-black uppercase text-gray-300 tracking-widest mb-2 block">出生日期</label>{isEditing ? <input type="date" className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 ring-botanical-green/10 outline-none" value={editForm.m_birthday} onChange={e => setEditForm({...editForm, m_birthday: e.target.value})} /> : <p className="font-bold text-lg">{formatDate(user.m_birthday)}</p>}</div>
+                    <div><label className="text-[9px] font-black uppercase text-gray-300 tracking-widest mb-2 block">預設地址</label>{isEditing ? <input className="w-full bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 ring-botanical-green/10 outline-none" value={editForm.m_address} onChange={e => setEditForm({...editForm, m_address: e.target.value})} /> : <p className="font-bold text-sm text-gray-600 leading-relaxed">{user.m_address}</p>}</div>
                   </div>
                 </div>
                 {isEditing && (
                   <div className="mt-16 flex gap-4">
                     <button type="button" onClick={() => setIsEditing(false)} className="flex-1 bg-gray-100 text-gray-400 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest">取消</button>
-                    <button type="submit" disabled={isSaving} className="flex-2 w-full bg-botanical-green text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-xl">{isSaving ? "儲存中..." : "確認儲存修改"}</button>
+                    <button type="submit" disabled={isSaving} className="flex-2 w-full bg-botanical-green text-white py-4 rounded-xl font-black text-[10px] uppercase shadow-xl hover:scale-[1.01] transition-all">{isSaving ? "儲存中..." : "確認儲存修改"}</button>
                   </div>
                 )}
               </form>
@@ -405,15 +404,10 @@ const MemberProfileView: React.FC<{
   );
 };
 
-const CheckoutView: React.FC<{
-  cart: CartItem[],
-  user: any,
-  onOrder: (address: string) => void,
-  isProcessing: boolean
-}> = ({ cart, user, onOrder, isProcessing }) => {
+// 結帳視圖
+const CheckoutView: React.FC<{ cart: CartItem[], user: any, onOrder: (address: string) => void, isProcessing: boolean }> = ({ cart, user, onOrder, isProcessing }) => {
   const [shippingAddr, setShippingAddr] = useState(user.m_address || "");
   const total = cart.reduce((a, b) => a + (Number(b.p_price) * b.quantity), 0);
-
   return (
     <div className="max-w-4xl mx-auto py-12 animate-in fade-in zoom-in-95 duration-700">
       <div className="bg-white rounded-[3rem] p-10 md:p-20 shadow-2xl border border-gray-50">
@@ -441,12 +435,15 @@ const CheckoutView: React.FC<{
             <textarea required className="w-full bg-gray-50 border-none rounded-3xl p-6 outline-none focus:ring-2 ring-botanical-green/10 min-h-[120px] text-lg font-medium" value={shippingAddr} onChange={e => setShippingAddr(e.target.value)} placeholder="請填寫完整收件地址" />
           </div>
         </div>
-        <button onClick={() => onOrder(shippingAddr)} disabled={isProcessing || !shippingAddr.trim()} className="w-full bg-botanical-green text-white py-8 rounded-[2.5rem] font-black text-sm uppercase tracking-[0.3em] shadow-2xl mt-16 disabled:bg-gray-200">{isProcessing ? '正在建立訂單...' : '確認下單'}</button>
+        <button onClick={() => onOrder(shippingAddr)} disabled={isProcessing || !shippingAddr.trim()} className="w-full bg-botanical-green text-white py-8 rounded-[2.5rem] font-black text-sm uppercase shadow-2xl mt-16 disabled:bg-gray-200 hover:scale-[1.01] transition-all">
+          {isProcessing ? '正在建立訂單...' : '確認下單'}
+        </button>
       </div>
     </div>
   );
 };
 
+// 主程式 App
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('HOME');
   const [products, setProducts] = useState<Product[]>([]);
@@ -454,13 +451,11 @@ const App: React.FC = () => {
   const [errorInfo, setErrorInfo] = useState<{msg: string, details?: string} | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [authMode, setAuthMode] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
   const [regForm, setRegForm] = useState({ m_email: '', m_password: '', m_name: '', m_phone: '', m_address: '', m_birthday: '' });
   const [isAuthProcessing, setIsAuthProcessing] = useState(false);
-
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
   const [productForModal, setProductForModal] = useState<Product | null>(null);
   const [modalQuantity, setModalQuantity] = useState<number>(1);
@@ -469,7 +464,13 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const savedUser = localStorage.getItem('bhg_user');
-    if (savedUser) { setCurrentUser(JSON.parse(savedUser)); setIsLoggedIn(true); }
+    if (savedUser) { 
+      try { 
+        const parsed = JSON.parse(savedUser); 
+        setCurrentUser(parsed); 
+        setIsLoggedIn(true); 
+      } catch(e) { localStorage.removeItem('bhg_user'); } 
+    }
     fetchProducts();
   }, []);
 
@@ -477,9 +478,15 @@ const App: React.FC = () => {
     setIsLoading(true);
     try {
       const response = await fetch(`${GAS_API_URL}?action=getProducts&t=${Date.now()}`);
+      if (!response.ok) throw new Error('伺服器回應錯誤');
       const result = await response.json();
       if (result.status === 'success') setProducts(result.data);
-    } catch (err: any) { setErrorInfo({ msg: '連線失敗', details: err.message }); } finally { setIsLoading(false); }
+      else throw new Error(result.error || '獲取產品失敗');
+    } catch (err: any) { 
+      setErrorInfo({ msg: '資料同步失敗', details: '請確認網路連線或稍後再試。' }); 
+    } finally { 
+      setIsLoading(false); 
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -489,12 +496,15 @@ const App: React.FC = () => {
     const m_password = formData.get('m_password') as string;
     setIsAuthProcessing(true);
     try {
-      const response = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'loginMember', data: { m_email, m_password } }) });
+      const response = await fetch(GAS_API_URL, { 
+        method: 'POST', 
+        body: JSON.stringify({ action: 'loginMember', data: { m_email, m_password } }) 
+      });
       const result = await response.json();
-      if (result.status === 'success') {
-        setCurrentUser(result.data);
-        setIsLoggedIn(true);
-        localStorage.setItem('bhg_user', JSON.stringify(result.data));
+      if (result.status === 'success') { 
+        setCurrentUser(result.data); 
+        setIsLoggedIn(true); 
+        localStorage.setItem('bhg_user', JSON.stringify(result.data)); 
         setView('SHOP'); 
       } else { alert(result.message); }
     } catch (err) { alert('連線異常'); } finally { setIsAuthProcessing(false); }
@@ -504,7 +514,10 @@ const App: React.FC = () => {
     e.preventDefault();
     setIsAuthProcessing(true);
     try {
-      const response = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'registerMember', data: regForm }) });
+      const response = await fetch(GAS_API_URL, { 
+        method: 'POST', 
+        body: JSON.stringify({ action: 'registerMember', data: regForm }) 
+      });
       const result = await response.json();
       if (result.status === 'success') { alert('註冊成功！'); setAuthMode('LOGIN'); } else { alert(result.message); }
     } catch (err) { alert('連線異常'); } finally { setIsAuthProcessing(false); }
@@ -512,13 +525,16 @@ const App: React.FC = () => {
 
   const handleUpdateProfile = async (data: any) => {
     try {
-      const response = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'updateMember', data }) });
+      const response = await fetch(GAS_API_URL, { 
+        method: 'POST', 
+        body: JSON.stringify({ action: 'updateMember', data }) 
+      });
       const result = await response.json();
-      if (result.status === 'success') {
-        const newUser = { ...currentUser, ...data };
-        setCurrentUser(newUser);
-        localStorage.setItem('bhg_user', JSON.stringify(newUser));
-        alert('修改成功！');
+      if (result.status === 'success') { 
+        const newUser = { ...currentUser, ...data }; 
+        setCurrentUser(newUser); 
+        localStorage.setItem('bhg_user', JSON.stringify(newUser)); 
+        alert('修改成功！'); 
       }
     } catch (err) { alert('連線異常'); }
   };
@@ -526,17 +542,31 @@ const App: React.FC = () => {
   const handleCreateOrder = async (address: string) => {
     setIsOrderProcessing(true);
     try {
-      const response = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ action: 'createOrder', data: { m_id: currentUser.m_id, o_items: cart, o_total: cart.reduce((a, b) => a + (Number(b.p_price) * b.quantity), 0), o_shipping_addr: address } }) });
+      const response = await fetch(GAS_API_URL, { 
+        method: 'POST', 
+        body: JSON.stringify({ 
+          action: 'createOrder', 
+          data: { 
+            m_id: currentUser.m_id, 
+            o_items: cart, 
+            o_total: cart.reduce((a, b) => a + (Number(b.p_price) * b.quantity), 0), 
+            o_shipping_addr: address 
+          } 
+        }) 
+      });
       const result = await response.json();
-      if (result.status === 'success') { setCart([]); setView('ORDER_SUCCESS'); fetchProducts(); } else { alert(result.message); }
+      if (result.status === 'success') { 
+        setCart([]); 
+        setView('ORDER_SUCCESS'); 
+        fetchProducts(); 
+      } else { alert(result.message); }
     } catch (err) { alert('連線異常'); } finally { setIsOrderProcessing(false); }
   };
-
-  const handleLogout = () => { setIsLoggedIn(false); setCurrentUser(null); localStorage.removeItem('bhg_user'); setView('HOME'); };
 
   return (
     <div className="min-h-screen health-white selection:bg-green-100 selection:text-botanical-green">
       <Navbar setView={setView} isLoggedIn={isLoggedIn} userName={currentUser?.m_name} cartCount={cart.reduce((a, b) => a + b.quantity, 0)} openCart={() => setIsCartDrawerOpen(true)} />
+      
       <QuantityModal isOpen={isQuantityModalOpen} product={productForModal} quantity={modalQuantity} setQuantity={setModalQuantity} onClose={() => setIsQuantityModalOpen(false)} onConfirm={() => {
         setCart(prev => {
           const existing = prev.find(item => item.p_id === productForModal!.p_id);
@@ -545,7 +575,13 @@ const App: React.FC = () => {
         });
         setIsQuantityModalOpen(false); setIsCartDrawerOpen(true);
       }} />
-      <CartDrawer isOpen={isCartDrawerOpen} cart={cart} onClose={() => setIsCartDrawerOpen(false)} onCheckout={() => { if (!isLoggedIn) { alert("請先登入"); setView('LOGIN'); } else { setView('CHECKOUT'); } setIsCartDrawerOpen(false); }} />
+
+      <CartDrawer isOpen={isCartDrawerOpen} cart={cart} onClose={() => setIsCartDrawerOpen(false)} onCheckout={() => { 
+        if (!isLoggedIn) { alert("請先登入"); setView('LOGIN'); } 
+        else { setView('CHECKOUT'); } 
+        setIsCartDrawerOpen(false); 
+      }} />
+
       <main className="max-w-7xl mx-auto px-6 py-12">
         {isLoading ? (
           <div className="min-h-[70vh] flex flex-col items-center justify-center gap-8">
@@ -554,20 +590,21 @@ const App: React.FC = () => {
           </div>
         ) : errorInfo ? (
           <div className="min-h-[50vh] flex flex-col items-center justify-center text-center p-8">
-             <h2 className="text-2xl font-serif font-bold text-rose-600 mb-4">{errorInfo.msg}</h2>
-             <button onClick={() => window.location.reload()} className="bg-botanical-green text-white px-8 py-3 rounded-full font-black text-xs">重新整理</button>
+            <h2 className="text-2xl font-serif font-bold text-rose-600 mb-4">{errorInfo.msg}</h2>
+            <p className="mb-8 text-gray-400">{errorInfo.details}</p>
+            <button onClick={() => window.location.reload()} className="bg-botanical-green text-white px-8 py-3 rounded-full font-black text-xs hover:scale-105 transition-all">點此重新整理</button>
           </div>
         ) : (
           <>
             {view === 'LOGIN' && <AuthView authMode={authMode} setAuthMode={setAuthMode} regForm={regForm} setRegForm={setRegForm} isAuthProcessing={isAuthProcessing} handleRegister={handleRegister} handleLogin={handleLogin} />}
-            {view === 'MEMBER' && currentUser && <MemberProfileView user={currentUser} onLogout={handleLogout} onUpdate={handleUpdateProfile} />}
+            {view === 'MEMBER' && currentUser && <MemberProfileView user={currentUser} onLogout={() => { setIsLoggedIn(false); setCurrentUser(null); localStorage.removeItem('bhg_user'); setView('HOME'); }} onUpdate={handleUpdateProfile} />}
             {view === 'CHECKOUT' && currentUser && <CheckoutView cart={cart} user={currentUser} onOrder={handleCreateOrder} isProcessing={isOrderProcessing} />}
             {view === 'ORDER_SUCCESS' && (
               <div className="min-h-[60vh] flex flex-col items-center justify-center text-center">
-                 <div className="w-24 h-24 bg-botanical-green/10 rounded-full flex items-center justify-center mb-10"><svg className="w-12 h-12 botanical-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg></div>
-                 <h2 className="text-6xl font-serif font-bold mb-6 tracking-tight">訂單已完成同步</h2>
-                 <p className="text-gray-400 text-lg mb-12 italic">感謝您的信任，訂單明細已同步至雲端。</p>
-                 <button onClick={() => setView('SHOP')} className="bg-botanical-green text-white px-16 py-6 rounded-full font-black text-xs uppercase tracking-[0.3em] shadow-2xl">繼續選購</button>
+                <div className="w-24 h-24 bg-botanical-green/10 rounded-full flex items-center justify-center mb-10"><svg className="w-12 h-12 botanical-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg></div>
+                <h2 className="text-6xl font-serif font-bold mb-6 tracking-tight">訂單已完成同步</h2>
+                <p className="text-gray-400 text-lg mb-12 italic">感謝您的信任，訂單明細已同步至雲端。</p>
+                <button onClick={() => setView('SHOP')} className="bg-botanical-green text-white px-16 py-6 rounded-full font-black text-xs shadow-2xl hover:scale-105 transition-all">繼續選購</button>
               </div>
             )}
             {view === 'HOME' && (
@@ -575,7 +612,7 @@ const App: React.FC = () => {
                 <span className="text-[11px] font-black botanical-green uppercase tracking-[0.6em] mb-4 block">Superior Health Care</span>
                 <h2 className="text-7xl md:text-9xl font-serif font-bold botanical-green mb-10 tracking-tighter leading-none">優雅與純粹<br/>的並存</h2>
                 <p className="text-gray-400 text-lg leading-loose mb-16 max-w-2xl mx-auto font-medium">專為現代女性打造，從大自然中汲取靈感，為您的每一天注入純淨活力。</p>
-                <button onClick={() => setView('SHOP')} className="bg-botanical-green text-white px-16 py-6 rounded-full font-black text-xs uppercase tracking-[0.3em] hover:scale-105 shadow-2xl transition-all">探索系列產品</button>
+                <button onClick={() => setView('SHOP')} className="bg-botanical-green text-white px-16 py-6 rounded-full font-black text-xs shadow-2xl transition-all hover:scale-105">探索系列產品</button>
               </header>
             )}
             {view === 'SHOP' && (
@@ -592,7 +629,9 @@ const App: React.FC = () => {
                       <p className="text-xs text-gray-400 mb-6 line-clamp-2">{p.p_desc || '頂級草本精華，為您帶來全方位呵護。'}</p>
                       <div className="flex justify-between items-center mt-auto">
                         <span className="font-black text-xl">NT$ {Number(p.p_price).toLocaleString()}</span>
-                        <button onClick={() => {setProductForModal(p); setModalQuantity(1); setIsQuantityModalOpen(true);}} disabled={Number(p.p_stock) <= 0} className="bg-botanical-green text-white p-4 rounded-xl shadow-xl hover:scale-110 active:scale-95 transition-all disabled:bg-gray-100 disabled:text-gray-300"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" /></svg></button>
+                        <button onClick={() => {setProductForModal(p); setModalQuantity(1); setIsQuantityModalOpen(true);}} disabled={Number(p.p_stock) <= 0} className="bg-botanical-green text-white p-4 rounded-xl shadow-xl transition-all disabled:bg-gray-100 disabled:text-gray-300 hover:scale-110 active:scale-95">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" /></svg>
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -601,7 +640,10 @@ const App: React.FC = () => {
             )}
             {view === 'PRODUCT_DETAIL' && selectedProduct && (
               <div className="py-12 animate-in fade-in duration-800">
-                <button onClick={() => setView('SHOP')} className="mb-12 text-[10px] font-black uppercase tracking-[0.3em] text-gray-300 hover:text-botanical-green flex items-center gap-2"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>返回商品清單</button>
+                <button onClick={() => setView('SHOP')} className="mb-12 text-[10px] font-black uppercase tracking-[0.3em] text-gray-300 hover:text-botanical-green flex items-center gap-2 transition-colors">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+                  返回商品清單
+                </button>
                 <div className="flex flex-col lg:flex-row gap-20">
                   <div className="w-full lg:w-1/2"><img src={getStableImageUrl(selectedProduct.p_image)} className="w-full aspect-square object-cover rounded-[4rem] shadow-2xl bg-white" alt={selectedProduct.p_name} /></div>
                   <div className="flex-1 flex flex-col justify-center">
@@ -609,7 +651,9 @@ const App: React.FC = () => {
                     <h1 className="text-6xl font-serif font-bold mb-8 leading-[1.1] tracking-tighter">{selectedProduct.p_name}</h1>
                     <p className="text-4xl font-black botanical-green mb-12">NT$ {Number(selectedProduct.p_price).toLocaleString()}</p>
                     <p className="text-gray-500 mb-12 italic leading-relaxed text-lg">{selectedProduct.p_desc || '這款頂級保健食品選用純淨天然成分。'}</p>
-                    <button onClick={() => {setProductForModal(selectedProduct); setModalQuantity(1); setIsQuantityModalOpen(true);}} disabled={Number(selectedProduct.p_stock) <= 0} className="w-full bg-botanical-green text-white py-8 rounded-[2.5rem] font-black text-sm uppercase tracking-[0.3em] shadow-2xl hover:scale-[1.02] transition-all disabled:opacity-50">{Number(selectedProduct.p_stock) > 0 ? '立即加入購物袋' : '暫無庫存'}</button>
+                    <button onClick={() => {setProductForModal(selectedProduct); setModalQuantity(1); setIsQuantityModalOpen(true);}} disabled={Number(selectedProduct.p_stock) <= 0} className="w-full bg-botanical-green text-white py-8 rounded-[2.5rem] font-black text-sm uppercase shadow-2xl transition-all hover:scale-[1.02] disabled:opacity-50">
+                      {Number(selectedProduct.p_stock) > 0 ? '立即加入購物袋' : '暫無庫存'}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -617,10 +661,7 @@ const App: React.FC = () => {
           </>
         )}
       </main>
-      <footer className="bg-white border-t border-gray-50 py-32 text-center">
-        <h1 className="text-3xl font-serif font-black botanical-green mb-10 tracking-tighter">BAO HONG GIRL</h1>
-        <p className="text-gray-300 text-[10px] tracking-[0.5em] uppercase font-black">© 2025 BHG Botanical Science. Purely for Health.</p>
-      </footer>
+      <footer className="bg-white border-t border-gray-50 py-32 text-center"><h1 className="text-3xl font-serif font-black botanical-green mb-10 tracking-tighter">BAO HONG GIRL</h1><p className="text-gray-300 text-[10px] tracking-[0.5em] uppercase font-black">© 2025 BHG Botanical Science. Purely for Health.</p></footer>
     </div>
   );
 };
