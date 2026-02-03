@@ -5,42 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>寶紅女孩 Bao Hong Girl | 頂級女性保健食品</title>
-    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans TC', 'Inter', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .botanical-green { color: #2D5A27; }
+        .bg-botanical-green { background-color: #2D5A27; }
+        .health-white { background-color: #FAFAFA; }
+    </style>
 <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
     "react/": "https://esm.sh/react@^19.2.4/",
-    "vite": "https://esm.sh/vite@^7.3.1",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.3"
+    "react": "https://esm.sh/react@^19.2.4"
   }
 }
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-<body class="bg-[#FAFAFA] text-gray-800">
-    <!-- 導覽列 -->
-    <nav id="navbar" class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 px-8 py-5 flex items-center justify-between"></nav>
-
-    <!-- 主內容區 -->
-    <main id="main-content" class="max-w-7xl mx-auto px-6 py-12"></main>
-
-    <!-- 頁尾 -->
-    <footer class="bg-white border-t border-gray-50 py-32 text-center">
-        <h1 class="text-3xl font-serif font-black botanical-green mb-10 tracking-tighter">BAO HONG GIRL</h1>
-        <p class="text-gray-300 text-[10px] tracking-[0.5em] uppercase font-black">© 2025 BHG Botanical Science. Purely for Health.</p>
-    </footer>
-
-    <!-- 購物車抽屜 -->
-    <div id="cart-drawer-overlay" class="fixed inset-0 z-[110] bg-black/30 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-500"></div>
-    <div id="cart-drawer" class="fixed top-0 right-0 z-[120] h-full w-full max-w-md bg-white shadow-[-30px_0_60px_rgba(0,0,0,0.1)] translate-x-full transition-transform duration-500 ease-out"></div>
-
-    <!-- 數量選擇彈窗 -->
-    <div id="quantity-modal" class="fixed inset-0 z-[130] flex items-center justify-center p-4 hidden"></div>
-
-    <!-- 載入邏輯 -->
-    <script type="module" src="./main.js"></script>
+<body class="health-white text-gray-800">
+    <div id="root"></div>
 <script type="module" src="/index.tsx"></script>
 </body>
 </html>
