@@ -1,36 +1,77 @@
 
-/* Tailwind Base Styles */
+/* 基礎重設與字體 */
 *, ::before, ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb; }
-html { line-height: 1.5; -webkit-text-size-adjust: 100%; -moz-tab-size: 4; tab-size: 4; font-family: 'Noto Sans TC', sans-serif; }
+html { line-height: 1.5; -webkit-text-size-adjust: 100%; -moz-tab-size: 4; tab-size: 4; font-family: 'Noto Sans TC', sans-serif; scroll-behavior: smooth; }
 body { margin: 0; line-height: inherit; background-color: #FAFAFA; color: #1f2937; }
 
-/* Custom Utilities */
-.botanical-green { color: #2D5A27; }
-.bg-botanical-green { background-color: #2D5A27; }
-.font-serif { font-family: 'Playfair Display', serif; }
+/* 寶紅女孩專屬顏色與類別 */
+.botanical-green { color: #2D5A27 !important; }
+.bg-botanical-green { background-color: #2D5A27 !important; }
+.health-white { background-color: #FAFAFA !important; }
+.font-serif { font-family: 'Playfair Display', serif !important; }
 
-/* Layout & Components from App.tsx classes */
-.health-white { background-color: #FAFAFA; }
-.selection\:bg-green-100::selection { background-color: #dcfce7; }
-.selection\:text-botanical-green::selection { color: #2D5A27; }
+/* 佈局原子類別 (關鍵樣式) */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.grid { display: grid; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.relative { position: relative; }
+.fixed { position: fixed; }
+.sticky { position: sticky; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.z-50 { z-index: 50; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
 
-/* Scrollbar Styling */
+/* 間距與內邊距 */
+.p-4 { padding: 1rem; }
+.p-8 { padding: 2rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+.mb-8 { margin-bottom: 2rem; }
+.gap-8 { gap: 2rem; }
+
+/* 圓角與陰影 (專案特色) */
+.rounded-2xl { border-radius: 1rem; }
+.rounded-3xl { border-radius: 1.5rem; }
+.rounded-\[2\.5rem\] { border-radius: 2.5rem; }
+.rounded-\[3rem\] { border-radius: 3rem; }
+.rounded-\[4rem\] { border-radius: 4rem; }
+.rounded-full { border-radius: 9999px; }
+.shadow-2xl { --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); box-shadow: var(--tw-shadow); }
+.shadow-xl { --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); box-shadow: var(--tw-shadow); }
+
+/* 文字樣式 */
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.875rem; }
+.text-lg { font-size: 1.125rem; }
+.text-2xl { font-size: 1.5rem; }
+.text-4xl { font-size: 2.25rem; }
+.text-6xl { font-size: 3.75rem; }
+.font-bold { font-weight: 700; }
+.font-black { font-weight: 900; }
+.uppercase { text-transform: uppercase; }
+.tracking-widest { letter-spacing: 0.1em; }
+.tracking-tighter { letter-spacing: -0.05em; }
+
+/* 背景與邊框 */
+.bg-white { background-color: #ffffff; }
+.bg-gray-50 { background-color: #f9fafb; }
+.bg-white\/95 { background-color: rgb(255 255 255 / 0.95); }
+.border { border-width: 1px; }
+.border-gray-100 { border-color: #f3f4f6; }
+.backdrop-blur-xl { --tw-backdrop-blur: blur(24px); backdrop-filter: var(--tw-backdrop-blur); }
+
+/* 動畫與過場 */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-in { animation: fadeIn 0.8s ease-out forwards; }
+.transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; }
+.hover\:scale-105:hover { transform: scale(1.05); }
+
+/* 捲動軸美化 */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #f1f1f1; }
 ::-webkit-scrollbar-thumb { background: #2D5A27; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #1e3d1a; }
-
-/* Animations */
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.animate-in { animation: fadeIn 0.5s ease-out fill-mode: forwards; }
-
-/* 這裡包含了 Tailwind CLI 會產出的核心原子類別 */
-.flex { display: flex; }
-.grid { display: grid; }
-.hidden { display: none; }
-.relative { position: relative; }
-.sticky { position: sticky; }
-.fixed { position: fixed; }
-.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
-.z-50 { z-index: 50; }
-/* ... (為了節省空間，這裡代表了編譯後的 CSS) ... */
