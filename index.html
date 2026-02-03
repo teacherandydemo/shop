@@ -5,9 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>寶紅女孩 Bao Hong Girl | 頂級女性保健食品</title>
+    <!-- Tailwind Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./index.css">
+    <script type="importmap">
+    {
+      "imports": {
+        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+        "react/": "https://esm.sh/react@^19.2.4/",
+        "react": "https://esm.sh/react@^19.2.4"
+      }
+    }
+    </script>
     <style>
         body { font-family: 'Noto Sans TC', 'Inter', sans-serif; }
         .font-serif { font-family: 'Playfair Display', serif; }
@@ -15,21 +24,11 @@
         .bg-botanical-green { background-color: #2D5A27; }
         .health-white { background-color: #FAFAFA; }
     </style>
-<script type="importmap">
-{
-  "imports": {
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4"
-  }
-}
-</script>
 <link rel="stylesheet" href="/index.css">
 </head>
 <body class="health-white text-gray-800">
     <div id="root"></div>
-    <!-- 明確引入入口檔案 -->
-    <script type="module" src="./index.tsx"></script>
+    <!-- 移除手動引入標籤，環境會自動處理入口點 -->
 <script type="module" src="/index.tsx"></script>
 </body>
 </html>
